@@ -1,0 +1,7 @@
+ <network ipv6='no'>
+   <name>external</name>
+   <bridge name='br-external'/>
+   <forward mode='bridge'/>
+   <virtualport type='openvswitch'/>
+ </network>
+
