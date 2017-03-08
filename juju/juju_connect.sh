@@ -54,8 +54,9 @@ function start_tomcat()
     local cmd1='sed -i s/port=\"8080\"/port=\"8483\"/g /home/ubuntu/tomcat8/conf/server.xml'
     exec_cmd_on_client $cmd1
 
-    local cmd2="ps aux | grep java | awk '{print \"$2\"}' | xargs kill -9; \
+    local cmd2="ps aux | grep java | awk '/logging/ {print \$2}' | xargs kill -9; \
                 /home/ubuntu/tomcat8/bin/catalina.sh start"
+    echo $cmd2
     exec_cmd_on_client $cmd2
 }
 
