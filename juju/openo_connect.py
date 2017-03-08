@@ -31,9 +31,9 @@ def request_get(url):
 
     return resp.json()
 
-def request_post(url, data, headers):
+def request_post(url, data, headers, files=None):
     try:
-        resp = requests.post(url, data=json.dumps(data), headers=headers)
+        resp = requests.post(url, data=json.dumps(data), headers=headers, files=files)
         if resp.status_code not in (200,201):
             raise RaiseError('post url: %s fail %d' % (url, resp.status_code))
     except Exception:
@@ -117,6 +117,11 @@ def add_openo_vnfm(msb_ip, juju_client_ip):
             "password":""}
     request_post(vnfm_url, data, headers)
 
+def upload_csar(package):
+    csar_url = 'http://' + msb_ip + '/openoapi/catalog/v1/csars'
+    files = {'file': open(package, 'rb')}
+    request_post(url=csar_url, files=files)
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
@@ -124,6 +129,8 @@ if __name__ == "__main__":
     parser.add_argument("--tosca_aria_ip", action='store', help="common_tosca_aria ip")
     parser.add_argument("--juju_client_ip", action='store', help="juju client ip")
     parser.add_argument("--auth_url", action='store', help="openstack auth url")
+    parser.add_argument("--ns_pkg", action='store', help="ns package")
+    parser.add_argument("--juju_pkg", action='store', help="juju package")
 
     args = parser.parse_args()
     msb_ip = args.msb_ip
@@ -137,7 +144,9 @@ if __name__ == "__main__":
             if i is None:
                 missing.append(i)
         raise RaiseError('missing parameter: %s' % missing)
-
+ 
     add_common_tosca_aria(msb_ip, tosca_aria_ip)
     add_openo_vim(msb_ip, auth_url)
     add_openo_vnfm(msb_ip, juju_client_ip)
+    upload_csar(ns_pkg)
+    upload_csar(juju_pkg)

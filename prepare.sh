@@ -26,6 +26,9 @@ function package_prepare()
         sudo yum install -y wget python-pip sshpass figlet curl net-tools
     fi
     sudo pip install pyyaml
-    curl -sSL https://experimental.docker.com/ | sh
-    service docker start
+    docker version &>/dev/null
+    if [[ $? != 0 ]];then
+        curl -sSL https://experimental.docker.com/ | sh
+        service docker start
+    fi
 }

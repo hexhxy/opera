@@ -65,7 +65,8 @@ function add_vim_and_vnfm()
                                         --tosca_aria_ip $OPENO_VM_IP \
                                         --juju_client_ip $floating_ip_client \
                                         --auth_url $OS_AUTH_URL
-
+                                        --ns_pkg "${OPERA_DIR}/csar/pop_ns_juju.csar" \
+                                        --juju_pkg "${OPERA_DIR}/csar/JUJU_clearwater.csar"
     docker stop nfvo-driver-vnfm-juju
     docker start nfvo-driver-vnfm-juju
     docker stop gso-service-gateway
