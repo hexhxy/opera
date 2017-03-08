@@ -3,12 +3,9 @@ openo_net:
   openo_vm_ip: 192.168.104.2
 
 openo_docker_net:
-  common_services_msb_port: 80
+  common_services_msb_port: 9090
   common_tosca_aria_port: 8204
   nfvo_driver_vnfm_juju_port: 8483
-  common_services_msb_ip: "192.168.104.2:80"
-  common_tosca_aria_ip: "192.168.104.2:8204"
-  nfv_driver_vnfm_juju_ip: "192.168.104.2:8483"
 
 juju_net:
   juju_net_cidr: 12.1.1.0/24

@@ -42,24 +42,17 @@ def generate_net_conf(net_config, scripts_dir):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
+    if len(sys.argv) != 2:
         print("parameter wrong%d %s" % (len(sys.argv), sys.argv))
         sys.exit(1)
 
-    _, vm_file, net_file = sys.argv
+    _, net_file = sys.argv
 
-    if not os.path.exists(vm_file):
-        print("openo-vm.yml doesn't exit")
-        sys.exit(1)
     if not os.path.exists(net_file):
         print("network.yml doesn't exit")
         sys.exit(1)
 
-    vm_config = load_file(vm_file)
     net_config = load_file(net_file)
-    if not vm_config:
-        print('format error in %s' % vm_file)
-        sys.exit(1)
     if not net_config:
         print('format error in %s' % net_file)
         sys.exit(1)
@@ -70,5 +63,4 @@ if __name__ == "__main__":
         print("dir opera/work/scripts doesn't exit")
         sys.exit(1)
 
-    generate_vm_conf(vm_config, scripts_dir)
     generate_net_conf(net_config, scripts_dir)

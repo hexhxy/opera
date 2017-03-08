@@ -13,8 +13,7 @@ OPENO_VM_DIR=${WORK_DIR}/openo_vm
 
 function launch_openo_docker()
 {
-    local cmd=$OPENO_DIR/openo_docker.sh
-    exec_cmd_on_openo $cmd
+    $OPENO_DIR/openo_docker.sh
 }
 
 set +ex

@@ -61,13 +61,17 @@ function start_tomcat()
 
 function add_vim_and_vnfm()
 {
-    python ${JUJU_DIR}/openo_connect.py --msb_ip $OPENO_VM_IP \
+    python ${JUJU_DIR}/openo_connect.py --msb_ip "$OPENO_VM_IP:$COMMON_SERVICES_MSB_PORT" \
                                         --tosca_aria_ip $OPENO_VM_IP \
                                         --juju_client_ip $floating_ip_client \
                                         --auth_url $OS_AUTH_URL
 
     docker stop nfvo-driver-vnfm-juju
     docker start nfvo-driver-vnfm-juju
+    docker stop gso-service-gateway
+    docker stop nfvo-resmanagement
+    docker start gso-service-gateway
+    docker start nfvo-resmanagement
 }
 
 function connect_juju_and_openo()

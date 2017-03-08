@@ -173,9 +173,8 @@ function docker_pull()
 
 function docker_run()
 {
-    external_nic=`ip route |grep '^default'|awk '{print $5F}'`
-    host_ip=`ifconfig $external_nic | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'`
-    msb_ip=$host_ip:$COMMON_SERVICES_MSB_PORT
+    msb_ip=$OPENO_VM_IP:$COMMON_SERVICES_MSB_PORT
+    echo 'OPEN-O MSB:$msb_ip'
     docker run -d --name common-services-msb -p $COMMON_SERVICES_MSB_PORT:80 openoint/common-services-msb:1.0.0
     docker run -d -e MSB_ADDR=$msb_ip --add-host controller:127.0.0.1 --name common-services-auth openoint/common-services-auth:1.0.0
     docker run -d -e MSB_ADDR=$msb_ip --name common-services-drivermanager openoint/common-services-drivermanager:1.0.0

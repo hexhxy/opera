@@ -12,7 +12,7 @@ function generate_conf()
 {
     rm -rf ${WORK_DIR}/scripts
     mkdir -p ${WORK_DIR}/scripts
-    python ${OPERA_DIR}/process_conf.py ${CONF_DIR}/openo-vm.yml /home/network.yml
+    python ${OPERA_DIR}/process_conf.py ${CONF_DIR}/network.yml
 }
 
 function package_prepare()

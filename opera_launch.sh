@@ -37,6 +37,9 @@ if [[ "$DEPLOY_FIRST_TIME" == "true" ]]; then
      generate_compass_openrc
 fi
 
+external_nic=`ip route |grep '^default'|awk '{print $5F}'`
+host_ip=`ifconfig $external_nic | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'`
+sed -i 's/^\(.*openo_vm_ip:\).*/\1 $host_ip/g' ${CONF_DIR}/network.yml
 generate_conf
 source ${WORK_DIR}/scripts/network.conf
 source ${WORK_DIR}/admin-openrc.sh
