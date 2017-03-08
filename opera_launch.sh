@@ -31,10 +31,10 @@ source ${JUJU_DIR}/juju_connect.sh
 
 mkdir -p $WORK_DIR
 
-#if [[ "$DEPLOY_FIRST_TIME" == "true" ]]; then
-#     package_prepare
-#     generate_compass_openrc
-#fi
+if [[ "$DEPLOY_FIRST_TIME" == "true" ]]; then
+     package_prepare
+     generate_compass_openrc
+fi
 
 external_nic=`ip route |grep '^default'|awk '{print $5F}'`
 host_ip=`ifconfig $external_nic | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'`

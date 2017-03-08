@@ -19,13 +19,13 @@ function package_prepare()
 {
     if [[ $(grep Ubuntu /etc/issue) ]]; then
         sudo apt-get update -y
-        sudo apt-get install -y wget mkisofs qemu-utils qemu-kvm libvirt-bin openvswitch-switch python-pip sshpass figlet
-        sudo pip install pyyaml
+        sudo apt-get install -y wget python-pip sshpass figlet curl net-tools
     else
         # not test with redhat server yet
         sudo yum update -y
-        sudo yum install -y wget mkisofs qemu-kvm libvirt-bin openvswitch-switch python-pip sshpass figlet
-        sudo pip install pyyaml
+        sudo yum install -y wget python-pip sshpass figlet curl net-tools
     fi
-    service openvswitch-switch start
+    sudo pip install pyyaml
+    curl -sSL https://experimental.docker.com/ | sh
+    service docker start
 }

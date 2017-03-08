@@ -211,7 +211,7 @@ function docker_run()
     # docker run -d -e MSB_ADDR=$msb_ip --name sdno-service-servicechain openoint/sdno-service-servicechain:1.0.0
     # docker run -d -e MSB_ADDR=$msb_ip --name sdno-service-vpc openoint/sdno-service-vpc:1.0.0
     # docker run -d -e MSB_ADDR=$msb_ip --name sdno-service-vxlan openoint/sdno-service-vxlan:1.0.0
-    tosca_id=$(docker run -d -e MSB_ADDR=$msb_ip --name common-tosca-aria -p $COMMON_TOSCA_ARIA_PORT:8204 openoint/common-tosca-aria:1.0.0)
+    docker run -d -e MSB_ADDR=$msb_ip --name common-tosca-aria -p $COMMON_TOSCA_ARIA_PORT:8204 openoint/common-tosca-aria:1.0.0
     # docker run -d -e MSB_ADDR=$msb_ip --name sdno-driver-ct-te openoint/sdno-driver-ct-te:1.0.0
     # docker run -d -e MSB_ADDR=$msb_ip --name sdno-monitoring openoint/sdno-monitoring:1.0.0
     # docker run -d -e MSB_ADDR=$msb_ip --name sdno-vsitemgr openoint/sdno-vsitemgr:1.0.0
