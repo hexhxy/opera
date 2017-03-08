@@ -68,6 +68,8 @@ function add_vim_and_vnfm()
                                         --auth_url $OS_AUTH_URL \
                                         --ns_pkg "${OPERA_DIR}/csar/pop_ns_juju.csar" \
                                         --juju_pkg "${OPERA_DIR}/csar/JUJU_clearwater.csar"
+    local cmd="ps aux | grep java | awk '/logging/ {print \$2}' | xargs kill -9;"
+    docker exec nfvo-driver-vnfm-juju $cmd
     docker stop nfvo-driver-vnfm-juju
     docker start nfvo-driver-vnfm-juju
     docker stop gso-service-gateway
