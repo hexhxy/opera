@@ -64,7 +64,7 @@ function add_vim_and_vnfm()
     python ${JUJU_DIR}/openo_connect.py --msb_ip "$OPENO_VM_IP:$COMMON_SERVICES_MSB_PORT" \
                                         --tosca_aria_ip $OPENO_VM_IP \
                                         --juju_client_ip $floating_ip_client \
-                                        --auth_url $OS_AUTH_URL
+                                        --auth_url $OS_AUTH_URL \
                                         --ns_pkg "${OPERA_DIR}/csar/pop_ns_juju.csar" \
                                         --juju_pkg "${OPERA_DIR}/csar/JUJU_clearwater.csar"
     docker stop nfvo-driver-vnfm-juju

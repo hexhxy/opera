@@ -93,9 +93,7 @@ function juju_prepare()
                                            --remote-ip-prefix 0.0.0.0/0 $default_secgroup_id
     fi
 
-    if [ ! -f /root/.ssh/id_rsa.pub ]; then
-        ssh-keygen -q -t rsa -f /root/.ssh/id_rsa -N ""
-    fi
+    echo -e 'n\n'|ssh-keygen -q -t rsa -N "" -f /root/.ssh/id_rsa 1>/dev/null
 
     openstack keypair list | grep jump-key || openstack keypair create --public-key \
                                               /root/.ssh/id_rsa.pub jump-key

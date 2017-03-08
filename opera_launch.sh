@@ -40,7 +40,6 @@ host_ip=`ifconfig $external_nic | grep 'inet addr:' | cut -d: -f2 | awk '{ print
 sed -i "s/^\(.*openo_vm_ip:\).*/\1 $host_ip/g" ${CONF_DIR}/network.yml
 generate_conf
 source ${WORK_DIR}/scripts/network.conf
-source ${WORK_DIR}/admin-openrc.sh
 source ${OPENO_DIR}/openo_docker.sh
 echo "OPENO_VM_IP:$OPENO_VM_IP"
 echo "COMMON_SERVICES_MSB_PORT:$COMMON_SERVICES_MSB_PORT"

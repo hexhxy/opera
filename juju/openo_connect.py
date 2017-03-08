@@ -137,6 +137,8 @@ if __name__ == "__main__":
     tosca_aria_ip = args.tosca_aria_ip
     juju_client_ip = args.juju_client_ip
     auth_url = args.auth_url
+    ns_pkg = args.ns_pkg
+    juju_pkg = args.juju_pkg
 
     if None in (msb_ip, tosca_aria_ip, juju_client_ip, auth_url):
         missing = []
