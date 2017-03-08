@@ -70,7 +70,7 @@ fi
 #sudo sync && sudo sysctl -w vm.drop_caches=3
 if [[ "$DEPLOY_JUJU" == "true" ]]; then
     juju_env_prepare
-
+    
     if [[ $clean_juju == true ]];then
         openstack server list | grep juju | awk '{print $2}' | xargs openstack server delete
     fi

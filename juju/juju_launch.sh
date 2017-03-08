@@ -116,7 +116,6 @@ function juju_client_prepare()
     fi
 
     local cmd3="echo -e \'n\\n\'|ssh-keygen -q -t rsa -N \"\" -f /home/ubuntu/.ssh/id_rsa 1>/dev/null"
-    echo "======================NEED to be removed:$cmd3"
     exec_cmd_on_client $cmd3
 
     local client_key=`exec_cmd_on_client sudo cat /home/ubuntu/.ssh/id_rsa.pub`
