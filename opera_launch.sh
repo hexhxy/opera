@@ -72,7 +72,10 @@ if [[ "$DEPLOY_JUJU" == "true" ]]; then
     juju_env_prepare
 
     if [[ $clean_juju == true ]];then
-        openstack server list | grep juju | awk '{print $2}' | xargs openstack server delete
+        servers=$(openstack server list | grep juju | awk '{print $2}')
+        if [[ -n $servers ]];then
+            openstack server delete $servers
+        fi
     fi
 
     if ! juju_prepare; then
