@@ -13,6 +13,7 @@ import sys
 import os
 import requests
 import json
+from pprint import pprint
 
 class RaiseError(Exception):
     def __init__(self, msg):
@@ -31,9 +32,9 @@ def request_get(url):
 
     return resp.json()
 
-def request_post(url, data, headers, files=None):
+def request_post(url, data, headers):
     try:
-        resp = requests.post(url, data=json.dumps(data), headers=headers, files=files)
+        resp = requests.post(url, data=json.dumps(data), headers=headers)
         if resp.status_code not in (200,201):
             raise RaiseError('post url: %s fail %d' % (url, resp.status_code))
     except Exception:
@@ -95,7 +96,6 @@ def add_openo_vnfm(msb_ip, juju_client_ip):
     for i in get_vim:
         if i["type"] == "openstack":
             vimId = i['vimId']
-            print vimId
 
     if vimId is None:
         raise RaiseError("vim openstack not found")
@@ -120,7 +120,18 @@ def add_openo_vnfm(msb_ip, juju_client_ip):
 def upload_csar(package):
     csar_url = 'http://' + msb_ip + '/openoapi/catalog/v1/csars'
     files = {'file': open(package, 'rb')}
-    request_post(url=csar_url, files=files)
+    res = requests.post(csar_url, files=files)
+    if res.status_code != 200:
+        pprint(res.json())
+        raise Exception('Error with uploading csar package: %s' % package)
+
+def delete_csars(msb_ip):
+    csar_url = 'http://' + msb_ip + '/openoapi/catalog/v1/csars/'
+    csars = request_get(csar_url)
+    for csar in csars:
+        csarId = csar["csarId"]
+        request_delete(csar_url + csarId)
+        pprint("csar %s is deleted" % csarId)
 
 if __name__ == "__main__":
 
@@ -150,5 +161,6 @@ if __name__ == "__main__":
     add_common_tosca_aria(msb_ip, tosca_aria_ip)
     add_openo_vim(msb_ip, auth_url)
     add_openo_vnfm(msb_ip, juju_client_ip)
-    upload_csar(ns_pkg)
+    delete_csars(msb_ip)
     upload_csar(juju_pkg)
+    upload_csar(ns_pkg)
