@@ -174,7 +174,7 @@ function docker_pull()
 function docker_run()
 {
     msb_ip=$OPENO_VM_IP:$COMMON_SERVICES_MSB_PORT
-    echo 'OPEN-O MSB:$msb_ip'
+    echo "OPEN-O MSB:$msb_ip"
     docker run -d --name common-services-msb -p $COMMON_SERVICES_MSB_PORT:80 openoint/common-services-msb:1.0.0
     docker run -d -e MSB_ADDR=$msb_ip --add-host controller:127.0.0.1 --name common-services-auth openoint/common-services-auth:1.0.0
     docker run -d -e MSB_ADDR=$msb_ip --name common-services-drivermanager openoint/common-services-drivermanager:1.0.0
@@ -222,11 +222,14 @@ function clean() {
     docker ps -a | grep openoint | awk '{print $1}' | xargs docker rm -f
 }
 
-# docker_pull
-clean
-docker_run
 
-if [[ $(docker ps -q | wc -l) == 22 ]];then
-    echo -e "\n\033[32mOpen-O Installed!\033[0m\n"
-fi
+function deploy_openo() {
+    # docker_pull
+    clean
+    docker_run
+
+    if [[ $(docker ps -q | wc -l) == 22 ]];then
+        echo -e "\n\033[32mOpen-O Installed!\033[0m\n"
+    fi
+}
 

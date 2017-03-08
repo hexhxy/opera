@@ -23,7 +23,6 @@ source ${OPERA_DIR}/prepare.sh
 source ${OPERA_DIR}/conf/download.conf
 
 source ${UTIL_DIR}/log.sh
-source ${OPENO_DIR}/openo_vm.sh
 source ${OPERA_DIR}/command.sh
 source ${JUJU_DIR}/adapter.sh
 source ${JUJU_DIR}/juju_setup.sh
@@ -32,23 +31,25 @@ source ${JUJU_DIR}/juju_connect.sh
 
 mkdir -p $WORK_DIR
 
-if [[ "$DEPLOY_FIRST_TIME" == "true" ]]; then
-     package_prepare
-     generate_compass_openrc
-fi
+#if [[ "$DEPLOY_FIRST_TIME" == "true" ]]; then
+#     package_prepare
+#     generate_compass_openrc
+#fi
 
 external_nic=`ip route |grep '^default'|awk '{print $5F}'`
 host_ip=`ifconfig $external_nic | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'`
-sed -i 's/^\(.*openo_vm_ip:\).*/\1 $host_ip/g' ${CONF_DIR}/network.yml
+sed -i "s/^\(.*openo_vm_ip:\).*/\1 $host_ip/g" ${CONF_DIR}/network.yml
 generate_conf
 source ${WORK_DIR}/scripts/network.conf
 source ${WORK_DIR}/admin-openrc.sh
-
+source ${OPENO_DIR}/openo_docker.sh
+echo "OPENO_VM_IP:$OPENO_VM_IP"
+echo "COMMON_SERVICES_MSB_PORT:$COMMON_SERVICES_MSB_PORT"
 #sudo sync && sudo sysctl -w vm.drop_caches=3
 
 if [[ "$DEPLOY_OPENO" == "true" ]]; then
-    if ! launch_openo_docker; then
-        log_error "launch_openo_docker failed"
+    if ! deploy_openo;then
+        log_error "deploy_openo failed"
         exit 1
     fi
 fi
