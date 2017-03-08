@@ -21,10 +21,10 @@ export DEPLOY_JUJU=${DEPLOY_JUJU:-"true"}
 
 source ${OPERA_DIR}/prepare.sh
 source ${OPERA_DIR}/conf/download.conf
+source ${OPERA_DIR}/conf/admin-openrc.sh
 
 source ${UTIL_DIR}/log.sh
 source ${OPERA_DIR}/command.sh
-source ${JUJU_DIR}/adapter.sh
 source ${JUJU_DIR}/juju_setup.sh
 source ${JUJU_DIR}/juju_launch.sh
 source ${JUJU_DIR}/juju_connect.sh
@@ -33,7 +33,6 @@ mkdir -p $WORK_DIR
 
 if [[ "$DEPLOY_FIRST_TIME" == "true" ]]; then
      package_prepare
-     generate_compass_openrc
 fi
 
 external_nic=`ip route |grep '^default'|awk '{print $5F}'`
