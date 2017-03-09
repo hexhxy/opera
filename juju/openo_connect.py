@@ -48,7 +48,7 @@ def request_delete(url):
     except Exception:
         raise
 
-def add_common_tosca_aria(msb_ip, tosca_aria_ip):
+def add_common_tosca_aria(msb_ip, tosca_aria_ip, tosca_aria_port):
     url = 'http://' + msb_ip + '/openoapi/microservices/v1/apiRoute'
     headers = {'Content-Type': 'application/json'}
     data = {"serviceName":"tosca",
@@ -59,7 +59,7 @@ def add_common_tosca_aria(msb_ip, tosca_aria_ip):
             "apiJsonType":"1",
             "control":"0",
             "status":"1",
-            "servers":[{"ip":tosca_aria_ip,"port":"8204","weight":0}]}
+            "servers":[{"ip":tosca_aria_ip,"port":tosca_aria_port,"weight":0}]}
     request_post(url, data, headers)
 
 def add_openo_vim(msb_ip, auth_url):
@@ -138,6 +138,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--msb_ip", action='store', help="common_services_msb ip")
     parser.add_argument("--tosca_aria_ip", action='store', help="common_tosca_aria ip")
+    parser.add_argument("--tosca_aria_port", action='store', help="common_tosca_aria port")
     parser.add_argument("--juju_client_ip", action='store', help="juju client ip")
     parser.add_argument("--auth_url", action='store', help="openstack auth url")
     parser.add_argument("--ns_pkg", action='store', help="ns package")
@@ -146,6 +147,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     msb_ip = args.msb_ip
     tosca_aria_ip = args.tosca_aria_ip
+    tosca_aria_port = args.tosca_aria_port
     juju_client_ip = args.juju_client_ip
     auth_url = args.auth_url
     ns_pkg = args.ns_pkg
@@ -158,7 +160,7 @@ if __name__ == "__main__":
                 missing.append(i)
         raise RaiseError('missing parameter: %s' % missing)
  
-    add_common_tosca_aria(msb_ip, tosca_aria_ip)
+    add_common_tosca_aria(msb_ip, tosca_aria_ip, tosca_aria_port)
     add_openo_vim(msb_ip, auth_url)
     add_openo_vnfm(msb_ip, juju_client_ip)
     delete_csars(msb_ip)

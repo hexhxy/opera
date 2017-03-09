@@ -31,6 +31,8 @@ function sync_juju_driver_file()
 
     cp ${UTIL_DIR}/modify_file.sh /home
     sed -i s/REPLACE_JUJU_DRIVER_IP/$OPENO_VM_IP/ /home/modify_file.sh
+    sed -i s/REPLACE_JUJU_DRIVER_DB_PORT/$NFVO_DRIVER_VNFM_JUJU_MYSQL_PORT/ /home/modify_file.sh
+    sed -i s/REPLACE_JUJU_DRIVER_PORT/$NFVO_DRIVER_VNFM_JUJU_PORT/ /home/modify_file.sh
     sed -i s/REPLACE_JUJU_METADATA_IP/$floating_ip_metadata/ /home/modify_file.sh
     sed -i s/MSB_PORT/$COMMON_SERVICES_MSB_PORT/ /home/modify_file.sh
     chmod +x /home/modify_file.sh
@@ -64,6 +66,7 @@ function add_vim_and_vnfm()
 {
     python ${JUJU_DIR}/openo_connect.py --msb_ip "$OPENO_VM_IP:$COMMON_SERVICES_MSB_PORT" \
                                         --tosca_aria_ip $OPENO_VM_IP \
+                                        --tosca_aria_port $COMMON_TOSCA_ARIA_PORT \
                                         --juju_client_ip $floating_ip_client \
                                         --auth_url $OS_AUTH_URL \
                                         --ns_pkg "${OPERA_DIR}/csar/pop_ns_juju.csar" \

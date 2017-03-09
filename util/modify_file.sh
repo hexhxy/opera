@@ -16,11 +16,11 @@ file2=/home/etc/csarInfo/csarinfo.json
 sed -i 's/^\(.*"csar_file_path":\).*/\1 "\/home\/ubuntu\/csar\/"\,/g' $file2
 
 file3=/home/ROOT/WEB-INF/classes/db.properties
-sed -i 's/^\(.*jdbc.url=\).*/\1jdbc:mysql:\/\/REPLACE_JUJU_DRIVER_IP:3306\/jujuvnfmdb/g' $file3
+sed -i 's/^\(.*jdbc.url=\).*/\1jdbc:mysql:\/\/REPLACE_JUJU_DRIVER_IP:REPLACE_JUJU_DRIVER_DB_PORT\/jujuvnfmdb/g' $file3
 
 file4=/home/ROOT/WEB-INF/classes/juju-config.properties
 sed -i 's/^\(.*charmPath=\).*/\1\/home\/ubuntu\/csar\//g' $file4
-sed -i 's/^\(.*grant_jujuvnfm_url=\).*/\1http:\/\/REPLACE_JUJU_DRIVER_IP:8483\//g' $file4
+sed -i 's/^\(.*grant_jujuvnfm_url=\).*/\1http:\/\/REPLACE_JUJU_DRIVER_IP:REPLACE_JUJU_DRIVER_PORT\//g' $file4
 
 file5=/home/etc/conf/restclient.json
 sed -i 's/^\(.*"host":\).*/\1"REPLACE_JUJU_DRIVER_IP"\,/g' $file5
