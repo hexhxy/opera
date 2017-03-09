@@ -1,9 +1,9 @@
 ---
 openo_net:
-  openo_vm_ip: 192.168.132.2
+  openo_vm_ip: 192.168.37.2
 
 openo_docker_net:
-  common_services_msb_port: 9090
+  common_services_msb_port: 9999
   common_tosca_aria_port: 8204
   nfvo_driver_vnfm_juju_port: 8483
 

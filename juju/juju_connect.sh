@@ -54,7 +54,7 @@ function start_tomcat()
     local cmd1='sed -i s/port=\"8080\"/port=\"8483\"/g /home/ubuntu/tomcat8/conf/server.xml'
     exec_cmd_on_client $cmd1
 
-    local cmd2="ps aux | grep java | awk '/logging/ {print \$2}' | xargs kill -9; \
+    local cmd2="pidof java | xargs kill -9; \
                 /home/ubuntu/tomcat8/bin/catalina.sh start"
     echo $cmd2
     exec_cmd_on_client $cmd2
@@ -68,8 +68,6 @@ function add_vim_and_vnfm()
                                         --auth_url $OS_AUTH_URL \
                                         --ns_pkg "${OPERA_DIR}/csar/pop_ns_juju.csar" \
                                         --juju_pkg "${OPERA_DIR}/csar/JUJU_clearwater.csar"
-    local cmd="ps aux | grep java | awk '/logging/ {print \$2}' | xargs kill -9;"
-    docker exec nfvo-driver-vnfm-juju $cmd
     docker stop nfvo-driver-vnfm-juju
     docker start nfvo-driver-vnfm-juju
     docker stop gso-service-gateway
