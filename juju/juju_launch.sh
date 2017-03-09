@@ -7,9 +7,18 @@
 # which accompanies this distribution, and is available at
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
+function clear_juju_vm()
+{
+    servers=$(openstack server list | grep juju | awk '{print $2}')
+    if [[ -n $servers ]];then
+        openstack server delete $servers
+    fi
+}
 
 function launch_juju_vm()
 {
+    clear_juju_vm
+
     local NET_ID=$(neutron net-list | grep juju-net | awk '{print $2}')
 
     if [[ ! $(nova list | grep juju-client-vm) ]]; then
@@ -66,9 +75,9 @@ function launch_juju_vm()
             log_error "launch juju vm can't access"
             exit 1
         fi
-        exec_cmd_on_client exit
+        exec_cmd_on_client exit 2>null
         local ready1=$?
-        exec_cmd_on_metadata exit
+        exec_cmd_on_metadata exit 2>null
         local ready2=$?
         let wait-=1
         sleep 2

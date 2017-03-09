@@ -12,7 +12,7 @@ function generate_conf()
 {
     rm -rf ${WORK_DIR}/scripts
     mkdir -p ${WORK_DIR}/scripts
-    python ${OPERA_DIR}/process_conf.py ${CONF_DIR}/network.yml
+    python ${OPERA_DIR}/process_conf.py ${CONF_DIR}/open-o.yml
 }
 
 function package_prepare()
@@ -30,5 +30,13 @@ function package_prepare()
     if [[ $? != 0 ]];then
         curl -sSL https://experimental.docker.com/ | sh
         service docker start
+    fi
+}
+
+function network_prepare()
+{
+    if [[ ! $(ip a | grep openo) ]]; then
+        sudo ip tuntap add dev openo mode tap
+        sudo ifconfig openo $OPENO_IP up
     fi
 }

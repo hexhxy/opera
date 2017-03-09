@@ -8,21 +8,8 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
 set -ex
-
-while [[ $# -gt 0 ]]
-do
-key="$1"
-case $key in
-    -c|--clean)
-    clean_juju=true
-    shift
-    ;;
-    *)
-
-    ;;
-esac
-done
-echo $clean_juju
+export floating_ip_client=192.168.104.103
+export floating_ip_metadata=192.168.104.102
 export OPERA_DIR=`cd ${BASH_SOURCE[0]%/*}/;pwd`
 CONF_DIR=${OPERA_DIR}/conf
 OPENO_DIR=${OPERA_DIR}/open-o
@@ -34,12 +21,13 @@ export DEPLOY_FIRST_TIME=${DEPLOY_FIRST_TIME:-"true"}
 export DEPLOY_OPENO=${DEPLOY_OPENO:-"true"}
 export DEPLOY_JUJU=${DEPLOY_JUJU:-"true"}
 
-source ${OPERA_DIR}/prepare.sh
-source ${OPERA_DIR}/conf/download.conf
 source ${OPERA_DIR}/conf/admin-openrc.sh
 
+source ${OPERA_DIR}/prepare.sh
+source ${OPERA_DIR}/conf/juju.conf
+source ${OPENO_DIR}/openo_docker.sh
 source ${UTIL_DIR}/log.sh
-source ${OPERA_DIR}/command.sh
+source ${JUJU_DIR}/command.sh
 source ${JUJU_DIR}/juju_setup.sh
 source ${JUJU_DIR}/juju_launch.sh
 source ${JUJU_DIR}/juju_connect.sh
@@ -47,17 +35,13 @@ source ${JUJU_DIR}/juju_connect.sh
 mkdir -p $WORK_DIR
 
 if [[ "$DEPLOY_FIRST_TIME" == "true" ]]; then
-     package_prepare
+    generate_conf
+    package_prepare
+    network_prepare
 fi
 
-external_nic=`ip route |grep '^default'|awk '{print $5F}'`
-host_ip=`ifconfig $external_nic | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'`
-sed -i "s/^\(.*openo_vm_ip:\).*/\1 $host_ip/g" ${CONF_DIR}/network.yml
-generate_conf
-source ${WORK_DIR}/scripts/network.conf
-source ${OPENO_DIR}/openo_docker.sh
-echo "OPENO_VM_IP:$OPENO_VM_IP"
-echo "COMMON_SERVICES_MSB_PORT:$COMMON_SERVICES_MSB_PORT"
+source ${WORK_DIR}/scripts/open-o.conf
+
 #sudo sync && sudo sysctl -w vm.drop_caches=3
 
 if [[ "$DEPLOY_OPENO" == "true" ]]; then
@@ -70,13 +54,6 @@ fi
 #sudo sync && sudo sysctl -w vm.drop_caches=3
 if [[ "$DEPLOY_JUJU" == "true" ]]; then
     juju_env_prepare
-
-    if [[ $clean_juju == true ]];then
-        servers=$(openstack server list | grep juju | awk '{print $2}')
-        if [[ -n $servers ]];then
-            openstack server delete $servers
-        fi
-    fi
 
     if ! juju_prepare; then
         log_error "juju_prepare failed"

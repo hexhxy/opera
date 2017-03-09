@@ -14,31 +14,18 @@ def load_file(file):
             return None
 
 
-def generate_vm_conf(vm_config, scripts_dir):
-    """generate opera/work/scripts_dir/openo-vm.conf"""
-    print vm_config["openo"]["cpu"]
-    with open(scripts_dir + "/openo-vm.conf", "w") as fd:
-        fd.write("OPENO_TAG=" + str(vm_config["openo"]["tag"]) + "\n")
-        fd.write("OPENO_VIRT_CPUS=" + str(vm_config["openo"]["cpu"]) + "\n")
-        fd.write("OPENO_VIRT_MEM=" + str(vm_config["openo"]["memory"]) + "\n")
-        fd.write("OPENO_VIRT_DISK=" + str(vm_config["openo"]["disk"]) + "\n")
-        fd.write("OPENO_VM_NET=" + vm_config["openo"]["vnet"] + "\n")
-
-
-def generate_net_conf(net_config, scripts_dir):
-    """generate opera/work/scripts_dir/network.conf"""
-    with open(scripts_dir + "/network.conf", "w") as fd:
-        for i in net_config["openo_net"].keys():
-            fd.write(i.upper() + "=" + net_config["openo_net"][i])
+def generate_net_conf(openo_config, scripts_dir):
+    """generate opera/work/scripts_dir/open-o.conf"""
+    with open(scripts_dir + "/open-o.conf", "w") as fd:
+        for i in openo_config["openo_net"].keys():
+            fd.write('{0}={1}'.format(i.upper(), openo_config["openo_net"][i]))
             fd.write("\n")
 
-        for key in net_config["openo_docker_net"]:
-            fd.write('{0}={1}'.format(key.upper(), net_config["openo_docker_net"][key]))
+        for i in openo_config["openo_docker_net"]:
+            fd.write('{0}={1}'.format(i.upper(), openo_config["openo_docker_net"][i]))
             fd.write("\n")
 
-        for i in net_config["juju_net"].keys():
-            fd.write(i.upper() + "=" + net_config["juju_net"][i])
-            fd.write("\n")
+        fd.write('{0}={1}'.format('APPLICATION', openo_config["application"]))
 
 
 if __name__ == "__main__":
@@ -46,15 +33,15 @@ if __name__ == "__main__":
         print("parameter wrong%d %s" % (len(sys.argv), sys.argv))
         sys.exit(1)
 
-    _, net_file = sys.argv
+    _, openo_file = sys.argv
 
-    if not os.path.exists(net_file):
+    if not os.path.exists(openo_file):
         print("network.yml doesn't exit")
         sys.exit(1)
 
-    net_config = load_file(net_file)
-    if not net_config:
-        print('format error in %s' % net_file)
+    openo_config = load_file(openo_file)
+    if not openo_config:
+        print('format error in %s' % openo_file)
         sys.exit(1)
 
     opera_dir = os.getenv('OPERA_DIR')
@@ -63,4 +50,4 @@ if __name__ == "__main__":
         print("dir opera/work/scripts doesn't exit")
         sys.exit(1)
 
-    generate_net_conf(net_config, scripts_dir)
+    generate_net_conf(openo_config, scripts_dir)
