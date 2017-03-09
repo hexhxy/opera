@@ -42,11 +42,11 @@ function sync_juju_driver_file()
     sed -i "s/^\(.*\"csar_file_path\":\).*/\1 \"\/home\/ubuntu\/csar\/\"\,/g" $file2
 
     file3=${TOMCAT_DIR}/ROOT/WEB-INF/classes/db.properties
-    sed -i "s/^\(.*jdbc.url=\).*/\1jdbc:mysql:\/\/$OPENO_IP:3306\/jujuvnfmdb/g" $file3
+    sed -i "s/^\(.*jdbc.url=\).*/\1jdbc:mysql:\/\/$OPENO_IP:$NFVO_DRIVER_VNFM_JUJU_MYSQL_PORT\/jujuvnfmdb/g" $file3
 
     file4=${TOMCAT_DIR}/ROOT/WEB-INF/classes/juju-config.properties
     sed -i "s/^\(.*charmPath=\).*/\1\/home\/ubuntu\/csar\//g" $file4
-    sed -i "s/^\(.*grant_jujuvnfm_url=\).*/\1http:\/\/$OPENO_IP:8483\//g" $file4
+    sed -i "s/^\(.*grant_jujuvnfm_url=\).*/\1http:\/\/$OPENO_IP:$NFVO_DRIVER_VNFM_JUJU_PORT\//g" $file4
 
     file5=${TOMCAT_DIR}/etc/conf/restclient.json
     sed -i "s/^\(.*\"host\":\).*/\1\"$OPENO_IP\"\,/g" $file5
@@ -84,17 +84,29 @@ function start_tomcat()
 function openo_connect()
 {
     python ${JUJU_DIR}/openo_connect.py --application $APPLICATION \
-                                        --msb_ip $OPENO_IP \
+                                        --msb_ip $OPENO_IP:$COMMON_SERVICES_MSB_PORT \
                                         --tosca_aria_ip $OPENO_IP \
+                                        --tosca_aria_port $COMMON_TOSCA_ARIA_PORT \
                                         --juju_client_ip $floating_ip_client \
                                         --auth_url $OS_AUTH_URL \
                                         --ns_pkg "${OPERA_DIR}/csar/pop_ns_juju.csar" \
                                         --vnf_pkg "${OPERA_DIR}/csar/JUJU_clearwater.csar"
 }
 
+function fix_openo_containers()
+{
+    docker exec gso-service-gateway sed -i 's|^\(.*"port":\).*|\1"$COMMON_SERVICES_MSB_PORT"|g' /service/etc/conf/restclient.json
+    docker stop gso-service-gateway
+    docker start gso-service-gateway
+    docker exec nfvo-resmanagement sed -i 's|^\(.*"port":\).*|\1"$COMMON_SERVICES_MSB_PORT"|g' /service/etc/conf/restclient.json
+    docker stop nfvo-resmanagement
+    docker start nfvo-resmanagement
+}
+
 function connect_juju_and_openo()
 {
     sync_juju_driver_file
     start_tomcat
+    fix_openo_containers
     openo_connect
 }

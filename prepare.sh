@@ -40,3 +40,18 @@ function network_prepare()
         sudo ifconfig openo $OPENO_IP up
     fi
 }
+
+function get_local_ip()
+{
+    external_nic=`ip route |grep '^default'|awk '{print $5F}'`
+    host_ip=`ifconfig $external_nic | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'`
+    sed -i "s/^\(.*openo_ip:\).*/\1 $host_ip/g" ${CONF_DIR}/open-o.yml
+}
+
+function prepare_env()
+{
+    package_prepare
+    get_local_ip
+    generate_conf
+#    network_prepare
+}

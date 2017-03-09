@@ -8,8 +8,6 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
 set -ex
-export floating_ip_client=192.168.104.103
-export floating_ip_metadata=192.168.104.102
 export OPERA_DIR=`cd ${BASH_SOURCE[0]%/*}/;pwd`
 CONF_DIR=${OPERA_DIR}/conf
 OPENO_DIR=${OPERA_DIR}/open-o
@@ -35,9 +33,7 @@ source ${JUJU_DIR}/juju_connect.sh
 mkdir -p $WORK_DIR
 
 if [[ "$DEPLOY_FIRST_TIME" == "true" ]]; then
-    generate_conf
-    package_prepare
-    network_prepare
+    prepare_env
 fi
 
 source ${WORK_DIR}/scripts/open-o.conf
