@@ -50,6 +50,7 @@ fi
 #sudo sync && sudo sysctl -w vm.drop_caches=3
 if [[ "$DEPLOY_JUJU" == "true" ]]; then
     juju_env_prepare
+    clear_juju_vm
 
     if ! juju_prepare; then
         log_error "juju_prepare failed"

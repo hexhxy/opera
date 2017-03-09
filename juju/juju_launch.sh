@@ -17,8 +17,6 @@ function clear_juju_vm()
 
 function launch_juju_vm()
 {
-    clear_juju_vm
-
     local NET_ID=$(neutron net-list | grep juju-net | awk '{print $2}')
 
     if [[ ! $(nova list | grep juju-client-vm) ]]; then

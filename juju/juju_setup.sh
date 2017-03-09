@@ -95,8 +95,8 @@ function juju_prepare()
 
     echo -e 'n\n'|ssh-keygen -q -t rsa -N "" -f /root/.ssh/id_rsa 1>/dev/null
 
-    openstack keypair delete jump-key || openstack keypair create --public-key \
-                                              /root/.ssh/id_rsa.pub jump-key
+    openstack keypair delete jump-key | true
+    openstack keypair create --public-key /root/.ssh/id_rsa.pub jump-key
 
     openstack flavor show m1.tiny   || openstack flavor create --ram 512 --disk 5 --vcpus 1 --public m1.tiny
     openstack flavor show m1.small  || openstack flavor create --ram 1024 --disk 10 --vcpus 1 --public m1.small
