@@ -103,4 +103,7 @@ function juju_prepare()
     openstack flavor show m1.medium || openstack flavor create --ram 2048 --disk 10 --vcpus 2 --public m1.medium
     openstack flavor show m1.large  || openstack flavor create --ram 3072 --disk 10 --vcpus 2 --public m1.large
     openstack flavor show m1.xlarge || openstack flavor create --ram 8096 --disk 30 --vcpus 4 --public m1.xlarge
+
+    openstack quota set --instances 20 admin
+    openstack quota set --core 30 admin
 }
