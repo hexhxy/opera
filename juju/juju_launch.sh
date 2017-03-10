@@ -73,9 +73,9 @@ function launch_juju_vm()
             log_error "launch juju vm can't access"
             exit 1
         fi
-        exec_cmd_on_client exit 2>null
+        exec_cmd_on_client exit 2>/dev/null
         local ready1=$?
-        exec_cmd_on_metadata exit 2>null
+        exec_cmd_on_metadata exit 2>/dev/null
         local ready2=$?
         let wait-=1
         sleep 2
