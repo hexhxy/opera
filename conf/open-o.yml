@@ -6,5 +6,6 @@ openo_docker_net:
   common_services_msb_port: 80
   common_tosca_aria_port: 8204
   nfvo_driver_vnfm_juju_port: 8483
+  nfvo_driver_vnfm_juju_mysql_port: 3306
 
 application: clearwater
