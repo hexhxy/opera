@@ -169,8 +169,6 @@ def package_onboard(msb_ip):
     request_post(ns_url, ns_data, headers)
 
 def create_service(msb_ip, ns_name, description, nsdId):
-    ns_name = 'test2'
-    vim_url = 'http://' + msb_ip + '/openoapi/extsys/v1/vims/'
     service_url = 'http://' + msb_ip + '/openoapi/servicegateway/v1/services'
     headers = {'Content-Type': 'application/json'}
     data1 = {"nsdId": nsdId,
