@@ -108,6 +108,6 @@ function connect_juju_and_openo()
 {
     sync_juju_driver_file
     start_tomcat
-    fix_openo_containers
+#    fix_openo_containers
     openo_connect
 }

@@ -43,6 +43,8 @@ def request_post(url, data, headers):
     except Exception:
         raise
 
+    return resp.json()
+
 def request_delete(url):
     try:
         resp = requests.delete(url)
@@ -66,6 +68,16 @@ def add_common_tosca_aria(msb_ip, tosca_aria_ip, tosca_aria_port):
             "servers":[{"ip":tosca_aria_ip,"port":tosca_aria_port,"weight":0}]}
     request_post(url, data, headers)
 
+def get_vim_id(msb_ip, vim_type):
+    vim_url = 'http://' + msb_ip + '/openoapi/extsys/v1/vims/'
+    get_vim = request_get(vim_url)
+    vimId = []
+    for i in get_vim:
+        if i["type"] == vim_type:
+            vimId.append(i['vimId'])
+
+    return vimId
+
 def add_openo_vim(msb_ip, auth_url):
     vim_url = 'http://' + msb_ip + '/openoapi/extsys/v1/vims/'
     vnfm_url = 'http://' + msb_ip + '/openoapi/extsys/v1/vnfms/'
@@ -80,14 +92,13 @@ def add_openo_vim(msb_ip, auth_url):
             "version":"newton",
             "description":"",
             "type":"openstack"}
-    get_vim = request_get(vim_url)
-    get_vnfm = request_get(vnfm_url)
-    for i in get_vim:
-        if i["type"] == "openstack":
-            for j in get_vnfm:
-                if j["vimId"] == i["vimId"]:
-                    request_delete(vnfm_url + j["vnfmId"])
-            request_delete(vim_url + i["vimId"])
+    vimId = get_vim_id(msb_ip, "openstack")
+    if len(vimId) != 0:
+        get_vnfm = request_get(vnfm_url)
+        for i in get_vnfm:
+            if i["vimId"] == vimId[0]:
+                request_delete(vnfm_url + i["vnfmId"])
+        request_delete(vim_url + vimId[0])
 
     request_post(vim_url, data, headers)
 
@@ -95,22 +106,17 @@ def add_openo_vnfm(msb_ip, juju_client_ip):
     vim_url = 'http://' + msb_ip + '/openoapi/extsys/v1/vims/'
     vnfm_url = 'http://' + msb_ip + '/openoapi/extsys/v1/vnfms/'
     headers = {'Content-Type': 'application/json'}
-    get_vim = request_get(vim_url)
-    vimId = ''
-    for i in get_vim:
-        if i["type"] == "openstack":
-            vimId = i['vimId']
-
-    if vimId is None:
+    vimId = get_vim_id(msb_ip, "openstack")
+    if len(vimId) == 0:
         raise RaiseError("vim openstack not found")
 
     get_vnfm = request_get(vnfm_url)
     for i in get_vnfm:
-        if i["vimId"] == vimId:
+        if i["vimId"] == vimId[0]:
             request_delete(vnfm_url + i["vnfmId"])
 
     data = {"name":"Juju-VNFM",
-            "vimId":vimId,
+            "vimId":vimId[0],
             "vendor":"jujuvnfm",
             "version":"jujuvnfm",
             "type":"jujuvnfm",
@@ -163,13 +169,24 @@ def package_onboard(msb_ip):
     request_post(ns_url, ns_data, headers)
 
 def create_service(msb_ip, ns_name, description, nsdId):
+    ns_name = 'test2'
+    vim_url = 'http://' + msb_ip + '/openoapi/extsys/v1/vims/'
     service_url = 'http://' + msb_ip + '/openoapi/servicegateway/v1/services'
     headers = {'Content-Type': 'application/json'}
-    data = {"nsdId": nsdId,
+    data1 = {"nsdId": nsdId,
             "nsName": ns_name,
             "description": description,
             "gatewayUri":"/openoapi/nslcm/v1/ns"}
-    request_post(service_url, data, headers)
+    vimId = get_vim_id(msb_ip, "openstack")
+    resp = request_post(service_url, data1, headers)
+    instance_id = resp["serviceId"]
+    data2 = {"gatewayUri":"/openoapi/nslcm/v1/ns/" + instance_id + "/instantiate",
+             "nsInstanceId":instance_id,
+             "additionalParamForNs":{
+             "location":vimId[0],
+             "sdncontroller":"select"}
+            }
+    request_post(service_url, data2, headers)
 
 if __name__ == "__main__":
 
