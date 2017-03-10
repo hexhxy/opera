@@ -95,10 +95,10 @@ function openo_connect()
 
 function fix_openo_containers()
 {
-    docker exec gso-service-gateway sed -i 's|^\(.*"port":\).*|\1"$COMMON_SERVICES_MSB_PORT"|g' /service/etc/conf/restclient.json
+    docker exec gso-service-gateway sed -i "s|^\(.*\"port\":\).*|\1 \"$COMMON_SERVICES_MSB_PORT\"|g" /service/etc/conf/restclient.json
     docker stop gso-service-gateway
     docker start gso-service-gateway
-    docker exec nfvo-resmanagement sed -i 's|^\(.*"port":\).*|\1"$COMMON_SERVICES_MSB_PORT"|g' /service/etc/conf/restclient.json
+    docker exec nfvo-resmanagement sed -i "s|^\(.*\"port\":\).*|\1 \"$COMMON_SERVICES_MSB_PORT\"|g" /service/etc/conf/restclient.json
     docker stop nfvo-resmanagement
     docker start nfvo-resmanagement
 }

@@ -196,7 +196,7 @@ if __name__ == "__main__":
     if None in (msb_ip, tosca_aria_ip, juju_client_ip, auth_url):
         raise RaiseError('missing parameter')
 
-    add_common_tosca_aria(msb_ip, tosca_aria_ip)
+    add_common_tosca_aria(msb_ip, tosca_aria_ip, tosca_aria_port)
     add_openo_vim(msb_ip, auth_url)
     add_openo_vnfm(msb_ip, juju_client_ip)
 
