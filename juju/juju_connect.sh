@@ -50,6 +50,7 @@ function sync_juju_driver_file()
 
     file5=${TOMCAT_DIR}/etc/conf/restclient.json
     sed -i "s/^\(.*\"host\":\).*/\1\"$OPENO_IP\"\,/g" $file5
+    sed -i "s|^\(.*\"port\":\).*|\1\"$COMMON_SERVICES_MSB_PORT\"|g" $file5
 
     file6=${TOMCAT_DIR}/etc/adapterInfo/jujuadapterinfo.json
     sed -i "s/^\(.*\"ip\":\).*/\1 \"$OPENO_IP\"\,/g" $file6
