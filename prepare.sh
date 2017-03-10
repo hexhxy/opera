@@ -7,11 +7,12 @@
 # which accompanies this distribution, and is available at
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
+SCRIPT_DIR=${WORK_DIR}/scripts
 
 function generate_conf()
 {
-    rm -rf ${WORK_DIR}/scripts
-    mkdir -p ${WORK_DIR}/scripts
+    rm -rf ${SCRIPT_DIR}
+    mkdir -p ${SCRIPT_DIR}
     python ${OPERA_DIR}/process_conf.py ${CONF_DIR}/open-o.yml
 }
 
@@ -35,23 +36,23 @@ function package_prepare()
 
 function network_prepare()
 {
-    if [[ ! $(ip a | grep openo) ]]; then
-        sudo ip tuntap add dev openo mode tap
-        sudo ifconfig openo $OPENO_IP up
+    local assigned_ip=`sed -n 's/OPENO_IP=//p' ${SCRIPT_DIR}/open-o.conf`
+    echo $assigned_ip
+    if [[ $assigned_ip != 'None' ]]; then
+        if [[ ! $(ifconfig -a | grep openo) ]]; then
+            sudo ip tuntap add dev openo mode tap
+        fi
+        sudo ifconfig openo $assigned_ip up
+    else
+        external_nic=`ip route |grep '^default'|awk '{print $5F}'`
+        host_ip=`ifconfig $external_nic | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'`
+        sed -i "s/^\(.*OPENO_IP=\).*/\1$host_ip/g" ${SCRIPT_DIR}/open-o.conf
     fi
-}
-
-function get_local_ip()
-{
-    external_nic=`ip route |grep '^default'|awk '{print $5F}'`
-    host_ip=`ifconfig $external_nic | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'`
-    sed -i "s/^\(.*openo_ip:\).*/\1 $host_ip/g" ${CONF_DIR}/open-o.yml
 }
 
 function prepare_env()
 {
-    package_prepare
-    get_local_ip
     generate_conf
-#    network_prepare
+    package_prepare
+    network_prepare
 }
