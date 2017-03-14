@@ -59,7 +59,6 @@ if [[ "$DEPLOY_JUJU" == "true" ]]; then
         log_error "launch_juju failed"
         exit 1
     fi
-    exit 1
     connect_juju_and_openo
 fi
 
