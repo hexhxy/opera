@@ -32,7 +32,7 @@ function sync_juju_driver_file()
     docker cp nfvo-driver-vnfm-juju:/service/etc ${TOMCAT_DIR}
 
     file1=${TOMCAT_DIR}/etc/conf/juju_conf.json
-    sed -i "s/^\(.*\"image-metadata-url\":\).*/\1 \"http:\/\/$floating_ip_metadata\/images\"\,/g" $file1
+    sed -i "s/^\(.*\"image-metadata-url\":\).*/\1 \"http:\/\/$juju_client_ip\/images\"\,/g" $file1
     sed -i "s/^\(.*\"network\":\).*/\1 \"juju-net\"\,/g" $file1
     sed -i "s/^\(.*\"use-floating-ip\":\).*/\1 \"True\"\,/g" $file1
 
@@ -54,9 +54,9 @@ function sync_juju_driver_file()
     sed -i "s/^\(.*\"ip\":\).*/\1 \"$OPENO_IP\"\,/g" $file6
 
     rsync -e 'ssh -o StrictHostKeyChecking=no' --rsync-path='sudo rsync' \
-    -av ${TOMCAT_DIR}/etc ubuntu@$floating_ip_client:/home/ubuntu/tomcat8/
+    -av ${TOMCAT_DIR}/etc ubuntu@$juju_client_ip:/home/ubuntu/tomcat8/
     rsync -e 'ssh -o StrictHostKeyChecking=no' --rsync-path='sudo rsync' \
-    -av ${TOMCAT_DIR}/ROOT ubuntu@$floating_ip_client:/home/ubuntu/tomcat8/webapps
+    -av ${TOMCAT_DIR}/ROOT ubuntu@$juju_client_ip:/home/ubuntu/tomcat8/webapps
 
     docker cp ${TOMCAT_DIR}/etc nfvo-driver-vnfm-juju:/service/
     docker cp ${TOMCAT_DIR}/ROOT nfvo-driver-vnfm-juju:/service/webapps/
@@ -86,7 +86,7 @@ function openo_connect()
                                         --msb_ip $OPENO_IP:$COMMON_SERVICES_MSB_PORT \
                                         --tosca_aria_ip $OPENO_IP \
                                         --tosca_aria_port $COMMON_TOSCA_ARIA_PORT \
-                                        --juju_client_ip $floating_ip_client \
+                                        --juju_client_ip $juju_client_ip \
                                         --auth_url $OS_AUTH_URL \
                                         --ns_pkg "${WORK_DIR}/csar/pop_ns_juju.csar" \
                                         --vnf_pkg "${WORK_DIR}/csar/JUJU_clearwater.csar"

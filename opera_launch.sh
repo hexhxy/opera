@@ -7,8 +7,8 @@
 # which accompanies this distribution, and is available at
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
-start=$(date +%s)
 set -ex
+start=$(date +%s)
 export OPERA_DIR=`cd ${BASH_SOURCE[0]%/*}/;pwd`
 CONF_DIR=${OPERA_DIR}/conf
 OPENO_DIR=${OPERA_DIR}/open-o
@@ -59,6 +59,7 @@ if [[ "$DEPLOY_JUJU" == "true" ]]; then
         log_error "launch_juju failed"
         exit 1
     fi
+    exit 1
     connect_juju_and_openo
 fi
 
