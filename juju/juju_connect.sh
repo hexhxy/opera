@@ -88,8 +88,8 @@ function openo_connect()
                                         --tosca_aria_port $COMMON_TOSCA_ARIA_PORT \
                                         --juju_client_ip $floating_ip_client \
                                         --auth_url $OS_AUTH_URL \
-                                        --ns_pkg "${OPERA_DIR}/csar/pop_ns_juju.csar" \
-                                        --vnf_pkg "${OPERA_DIR}/csar/JUJU_clearwater.csar"
+                                        --ns_pkg "${WORK_DIR}/csar/pop_ns_juju.csar" \
+                                        --vnf_pkg "${WORK_DIR}/csar/JUJU_clearwater.csar"
 }
 
 function fix_openo_containers()
