@@ -7,6 +7,7 @@
 # which accompanies this distribution, and is available at
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
+start=$(date +%s)
 set -ex
 export OPERA_DIR=`cd ${BASH_SOURCE[0]%/*}/;pwd`
 CONF_DIR=${OPERA_DIR}/conf
@@ -64,5 +65,8 @@ if [[ "$DEPLOY_JUJU" == "true" ]]; then
     connect_juju_and_openo
 fi
 
-figlet -ctf slant Open-O Installed!
+figlet -ctf slant Open-O Installed
+end=$(date +%s)
+runtime=$((end-start) / 60)
+echo "Duration: $runtime minutes"
 set +ex

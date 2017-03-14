@@ -100,6 +100,8 @@ function fix_openo_containers()
     docker exec nfvo-resmanagement sed -i "s|^\(.*\"port\":\).*|\1 \"$COMMON_SERVICES_MSB_PORT\"|g" /service/etc/conf/restclient.json
     docker stop nfvo-resmanagement
     docker start nfvo-resmanagement
+    docker stop nfvo-lcm
+    docker start nfvo-lcm
 }
 
 function connect_juju_and_openo()

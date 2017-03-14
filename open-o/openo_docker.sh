@@ -73,7 +73,7 @@ function docker_pull()
     do
         echo "Try again"
     done
-    until docker pull openoint/nfvo-driver-vnfm-juju
+    until docker pull huangxiangyu/nfvo-driver-vnfm-juju
     do
         echo "Try again"
     done
@@ -190,7 +190,7 @@ function docker_run()
     docker run -d -e MSB_ADDR=$msb_ip --name nfvo-driver-sdnc-zte openoint/nfvo-driver-sdnc-zte:1.0.0
     docker run -d -e MSB_ADDR=$msb_ip --name nfvo-driver-vim openoint/nfvo-driver-vim:1.0.0
     docker run -d -e MSB_ADDR=$msb_ip --name nfvo-driver-vnfm-huawei openoint/nfvo-driver-vnfm-huawei:1.0.0
-    docker run -d -e MSB_ADDR=$msb_ip --name nfvo-driver-vnfm-juju -p $OPENO_IP:$NFVO_DRIVER_VNFM_JUJU_PORT:8483 -p $OPENO_IP:$NFVO_DRIVER_VNFM_JUJU_MYSQL_PORT:3306 openoint/nfvo-driver-vnfm-juju
+    docker run -d -e MSB_ADDR=$msb_ip --name nfvo-driver-vnfm-juju -p $OPENO_IP:$NFVO_DRIVER_VNFM_JUJU_PORT:8483 -p $OPENO_IP:$NFVO_DRIVER_VNFM_JUJU_MYSQL_PORT:3306 huangxiangyu/nfvo-driver-vnfm-juju
     docker run -d -e MSB_ADDR=$msb_ip --name nfvo-driver-vnfm-zte openoint/nfvo-driver-vnfm-zte:1.0.0
     docker run -d -e MSB_ADDR=$msb_ip -e MYSQL_ADDR=$tosca_inventory_ip:3306 --name nfvo-lcm -p $OPENO_IP:8403:8403 openoint/nfvo-lcm:1.0.0
     docker run -d -e MSB_ADDR=$msb_ip --name nfvo-resmanagement openoint/nfvo-resmanagement:1.0.0
