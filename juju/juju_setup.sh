@@ -59,9 +59,9 @@ function juju_prepare()
         --visibility=public --file ${IMG_DIR}/$JUJU_VM_IMG_URL
 
     mkdir -p $CSAR_DIR
-    for((i=0;i<${#CSAR_URL[@]};i++))
+    for((i=0;i<${#CSAR_NAME[@]};i++))
     do
-        juju_download_csar ${CSAR_NAME[i]}
+        juju_download_csar ${CSAR_URL[i]}
     done
 
     if [[ ! $(neutron net-list | grep juju-net) ]]; then
