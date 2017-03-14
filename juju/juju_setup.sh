@@ -9,6 +9,7 @@
 ##############################################################################
 
 IMG_DIR=${WORK_DIR}/img
+CSAR_DIR=${WORK_DIR}/csar
 
 function juju_env_prepare()
 {
@@ -30,20 +31,37 @@ function juju_download_img()
     fi
 }
 
+function juju_download_csar()
+{
+    if [ ! -e ${CSAR_DIR}/${1##*/} ];then
+        wget -O ${CSAR_DIR}/${1##*/} $1
+    fi
+}
+
 function juju_prepare()
 {
     log_info "juju_prepare enter"
 
     mkdir -p $IMG_DIR
-
     for((i=0;i<${#JUJU_IMG_NAME[@]};i++))
     do
         juju_download_img ${JUJU_IMG_URL[i]}
         if [[ ! $(glance image-list | grep ${JUJU_IMG_NAME[i]}) ]]; then
             glance image-create --name=${JUJU_IMG_NAME[i]} \
-                            --disk-format qcow2 --container-format=bare \
-                            --visibility=public --file ${IMG_DIR}/${JUJU_IMG_URL[i]##*/}
+                --disk-format qcow2 --container-format=bare \
+                --visibility=public --file ${IMG_DIR}/${JUJU_IMG_URL[i]##*/}
         fi
+    done
+
+    juju_download_img $JUJU_VM_IMG_URL
+    glance image-create --name=$JUJU_VM_IMG \
+        --disk-format qcow2 --container-format=bare \
+        --visibility=public --file ${IMG_DIR}/$JUJU_VM_IMG_URL
+
+    mkdir -p $CSAR_DIR
+    for((i=0;i<${#CSAR_URL[@]};i++))
+    do
+        juju_download_csar ${CSAR_NAME[i]}
     done
 
     if [[ ! $(neutron net-list | grep juju-net) ]]; then

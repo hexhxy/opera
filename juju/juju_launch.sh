@@ -20,7 +20,7 @@ function launch_juju_vm()
     local NET_ID=$(neutron net-list | grep juju-net | awk '{print $2}')
 
     if [[ ! $(nova list | grep juju-client-vm) ]]; then
-        nova boot --flavor m1.small --image xenial_x86_64 --nic net-id=$NET_ID \
+        nova boot --flavor m1.small --image $JUJU_VM_IMG --nic net-id=$NET_ID \
                   --key-name jump-key --security-group default juju-client-vm
         if [ $? -ne 0 ]; then
             log_error "boot juju-client-vm fail"
@@ -29,7 +29,7 @@ function launch_juju_vm()
     fi
 
     if [[ ! $(nova list | grep juju-metadata-vm) ]]; then
-        nova boot --flavor m1.small --image xenial_x86_64 --nic net-id=$NET_ID \
+        nova boot --flavor m1.small --image $JUJU_VM_IMG --nic net-id=$NET_ID \
                   --key-name jump-key --security-group default juju-metadata-vm
         if [ $? -ne 0 ]; then
             log_error "boot juju-metadata-vm fail"
@@ -89,23 +89,14 @@ function launch_juju_vm()
 
 function juju_metadata_prepare()
 {
-    local cmd="sudo apt update -y; \
-         sudo apt-get install nginx -y"
-    exec_cmd_on_metadata $cmd
-
-    if [[ ! $(exec_cmd_on_metadata sudo ps -aux | grep nginx) ]]; then
-        log_error "juju-metadata nginx error"
+    if [[ ! $(exec_cmd_on_metadata sudo ps aux | grep nginx) ]]; then
+        log_error "juju-metadata nginx is not running"
         exit 1
     fi
 }
 
 function juju_client_prepare()
 {
-    local cmd1="sudo add-apt-repository ppa:juju/stable; \
-         sudo apt update -y; \
-         sudo apt install juju zfsutils-linux -y"
-    exec_cmd_on_client $cmd1
-
     exec_cmd_on_client "echo 'clouds:
     openstack:
         type: openstack

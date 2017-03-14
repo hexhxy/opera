@@ -37,6 +37,7 @@ def request_get(url):
 def request_post(url, data, headers):
     try:
         resp = requests.post(url, data=json.dumps(data), headers=headers)
+
         if resp.status_code not in (200,201,202):
             pprint (resp.json())
             raise RaiseError('post url: %s fail %d' % (url, resp.status_code))
@@ -178,6 +179,8 @@ def create_service(msb_ip, ns_name, description, nsdId):
     vimId = get_vim_id(msb_ip, "openstack")
     resp = request_post(service_url, data1, headers)
     instance_id = resp["serviceId"]
+    pprint ("instance_id:%s" % instance_id)
+    pprint('response:%s' % resp)
     data2 = {"gatewayUri":"/openoapi/nslcm/v1/ns/" + instance_id + "/instantiate",
              "nsInstanceId":instance_id,
              "additionalParamForNs":{

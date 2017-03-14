@@ -12,9 +12,7 @@ function connect_prepare()
 {
     apt-get install -y rsync
 
-    local cmd="sudo apt-get install -y default-jdk; \
-               wget -nc https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.9/bin/apache-tomcat-8.5.9.tar.gz; \
-               tar -zxvf apache-tomcat-8.5.9.tar.gz; \
+    local cmd="tar -zxvf apache-tomcat-8.5.9.tar.gz; \
                sudo rm -rf tomcat8 csar; \
                mv apache-tomcat-8.5.9 tomcat8; \
                rm -rf tomcat8/webapps/*; \
