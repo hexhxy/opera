@@ -39,8 +39,6 @@ fi
 
 source ${WORK_DIR}/scripts/open-o.conf
 
-#sudo sync && sudo sysctl -w vm.drop_caches=3
-
 if [[ "$DEPLOY_OPENO" == "true" ]]; then
     if ! deploy_openo;then
         log_error "deploy_openo failed"
@@ -48,7 +46,6 @@ if [[ "$DEPLOY_OPENO" == "true" ]]; then
     fi
 fi
 
-#sudo sync && sudo sysctl -w vm.drop_caches=3
 if [[ "$DEPLOY_JUJU" == "true" ]]; then
     juju_env_prepare
     clear_juju_vm
@@ -67,6 +64,6 @@ fi
 
 figlet -ctf slant Open-O Installed
 end=$(date +%s)
-runtime=$((end-start) / 60)
-echo "Duration: $runtime minutes"
+runtime=$[(end-start) / 60]
+echo "Duration: $runtime mins"
 set +ex

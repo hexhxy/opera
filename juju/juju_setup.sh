@@ -53,7 +53,10 @@ function juju_prepare()
         fi
     done
 
-    wget -O $IMG_DIR/$JUJU_VM_IMG $JUJU_VM_IMG_URL
+    wget -nc -O $IMG_DIR/$JUJU_VM_IMG $JUJU_VM_IMG_URL
+    if [[ $(glance image-list | grep $JUJU_VM_IMG) ]]; then
+        openstack image delete $JUJU_VM_IMG
+    fi
     glance image-create --name=$JUJU_VM_IMG \
         --disk-format qcow2 --container-format=bare \
         --visibility=public --file $IMG_DIR/$JUJU_VM_IMG
