@@ -62,6 +62,8 @@ if [[ "$DEPLOY_JUJU" == "true" ]]; then
     connect_juju_and_openo
 fi
 
+source ${JUJU_DIR}/vims_check.sh
+
 figlet -ctf slant Open-O Installed
 end=$(date +%s)
 runtime=$[(end-start) / 60]

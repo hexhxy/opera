@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -ex
 ##############################################################################
 # Copyright (c) 2016-2017 HUAWEI TECHNOLOGIES CO.,LTD and others.
 #
@@ -7,9 +7,22 @@
 # which accompanies this distribution, and is available at
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
-source $(pwd)/command.sh
-client_ip=$(openstack server list | grep juju-client-vm | awk '{print $9}')
-export floating_ip_client=$client_ip
+juju_client_ip=$(openstack server list | grep juju-client-vm | awk '{print $9}')
+
+function log_error() {
+    echo -e "\033[31m$*\033[0m"
+}
+
+function exec_cmd_on_client()
+{
+    local ssh_args="-o StrictHostKeyChecking=no"
+
+    if [ ! $juju_client_ip ]; then
+        log_error "juju-client ip not found"
+        exit 1
+    fi
+    ssh $ssh_args ubuntu@$juju_client_ip "$@"
+}
 
 function check_clearwater() {
     check_clearwater_cmd='juju status | grep clearwater &> /dev/null'
@@ -45,6 +58,7 @@ function check_clearwater() {
             echo "Clearwater has fully started"
             break
         else
+            echo "$count out of 7 nodes have started"
             let try-=1
             sleep $duration
         fi
