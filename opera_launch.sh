@@ -9,6 +9,7 @@
 ##############################################################################
 set -ex
 start=$(date +%s)
+export juju_client_ip=192.168.104.116
 export OPERA_DIR=`cd ${BASH_SOURCE[0]%/*}/;pwd`
 CONF_DIR=${OPERA_DIR}/conf
 OPENO_DIR=${OPERA_DIR}/open-o
@@ -38,6 +39,7 @@ if [[ "$DEPLOY_FIRST_TIME" == "true" ]]; then
 fi
 
 source ${WORK_DIR}/scripts/open-o.conf
+source ${WORK_DIR}/scripts/application.conf
 
 if [[ "$DEPLOY_OPENO" == "true" ]]; then
     if ! deploy_openo;then

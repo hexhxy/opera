@@ -13,7 +13,8 @@ function generate_conf()
 {
     rm -rf ${SCRIPT_DIR}
     mkdir -p ${SCRIPT_DIR}
-    python ${OPERA_DIR}/process_conf.py ${CONF_DIR}/open-o.yml
+    python ${OPERA_DIR}/process_conf.py ${CONF_DIR}/open-o.yml \
+                                        ${CONF_DIR}/application.yml
 }
 
 function package_prepare()

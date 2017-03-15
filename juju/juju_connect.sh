@@ -91,8 +91,8 @@ function openo_connect()
     if [[ -n $APP_NAME ]]; then
         python ${JUJU_DIR}/deploy_application.py --msb_ip $OPENO_IP:$COMMON_SERVICES_MSB_PORT \
                                                  --application $APP_NAME \
-                                                 --ns_pkg "${CSAR_DIR}/${APP_NAME}/${APP_NS_PKG}" \
-                                                 --vnf_pkg "${CSAR_DIR}/${APP_NAME}/${APP_VNF_PKG}"
+                                                 --ns_pkg "${CSAR_DIR}/${APP_NS_PKG}" \
+                                                 --vnf_pkg "${CSAR_DIR}/${APP_VNF_PKG}"
     fi
 }
 
@@ -112,6 +112,6 @@ function connect_juju_and_openo()
 
     sync_juju_driver_file
     start_tomcat
-#    fix_openo_containers
+    fix_openo_containers
     openo_connect
 }
