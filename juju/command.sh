@@ -18,3 +18,14 @@ function exec_cmd_on_client()
     fi
     ssh $ssh_args ubuntu@$juju_client_ip "$@"
 }
+
+function scp_to_client()
+{
+    local ssh_args="-o StrictHostKeyChecking=no"
+
+    if [ ! $juju_client_ip ]; then
+        log_error "juju-client ip not found"
+        exit 1
+    fi
+    scp $ssh_args $1 ubuntu@$juju_client_ip:$2
+}

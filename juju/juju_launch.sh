@@ -86,16 +86,10 @@ function juju_client_prepare()
         exit 1
     fi
 
-    exec_cmd_on_client "echo 'credentials:
-    openstack:
-        openstack:
-            auth-type: userpass
-            password: $OS_PASSWORD
-            tenant-name: $OS_PROJECT_NAME
-            username: $OS_USERNAME' > os-creds.yaml"
-
-    local cmd2="juju add-credential openstack -f os-creds.yaml --replace"
+    local cmd2="juju remove-credential openstack openstack"
     exec_cmd_on_client $cmd2
+
+    scp_to_client ${CONF_DIR}/admin-openrc.sh /home/ubuntu
 }
 
 function juju_generate_metadata()
@@ -135,7 +129,8 @@ function bootstrap_juju_controller()
     local cmd1="juju controllers | grep openstack"
     exec_cmd_on_client $cmd1
     if [[ $? != 0 ]];then
-        local cmd2="juju bootstrap openstack openstack \
+        local cmd2="source admin-openrc.sh; \
+            juju bootstrap openstack openstack \
             --config image-metadata-url=http://$juju_client_ip/images \
             --config network=juju-net --config use-floating-ip=True \
             --config use-default-secgroup=True \
