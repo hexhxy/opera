@@ -82,14 +82,18 @@ function start_tomcat()
 
 function openo_connect()
 {
-    python ${JUJU_DIR}/openo_connect.py --application $APPLICATION \
-                                        --msb_ip $OPENO_IP:$COMMON_SERVICES_MSB_PORT \
+    python ${JUJU_DIR}/openo_connect.py --msb_ip $OPENO_IP:$COMMON_SERVICES_MSB_PORT \
                                         --tosca_aria_ip $OPENO_IP \
                                         --tosca_aria_port $COMMON_TOSCA_ARIA_PORT \
                                         --juju_client_ip $juju_client_ip \
-                                        --auth_url $OS_AUTH_URL \
-                                        --ns_pkg "${WORK_DIR}/csar/pop_ns_juju.csar" \
-                                        --vnf_pkg "${WORK_DIR}/csar/JUJU_clearwater.csar"
+                                        --auth_url $OS_AUTH_URL
+
+    if [[ -n $APP_NAME ]]; then
+        python ${JUJU_DIR}/deploy_application.py --msb_ip $OPENO_IP:$COMMON_SERVICES_MSB_PORT \
+                                                 --application $APP_NAME \
+                                                 --ns_pkg "${CSAR_DIR}/${APP_NAME}/${APP_NS_PKG}" \
+                                                 --vnf_pkg "${CSAR_DIR}/${APP_NAME}/${APP_VNF_PKG}"
+    fi
 }
 
 function fix_openo_containers()
@@ -100,14 +104,14 @@ function fix_openo_containers()
     docker exec nfvo-resmanagement sed -i "s|^\(.*\"port\":\).*|\1 \"$COMMON_SERVICES_MSB_PORT\"|g" /service/etc/conf/restclient.json
     docker stop nfvo-resmanagement
     docker start nfvo-resmanagement
-    docker stop nfvo-lcm
-    docker start nfvo-lcm
 }
 
 function connect_juju_and_openo()
 {
+    log_info "connect_juju_and_openo enter"
+
     sync_juju_driver_file
     start_tomcat
-    fix_openo_containers
+#    fix_openo_containers
     openo_connect
 }
