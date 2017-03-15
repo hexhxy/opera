@@ -132,18 +132,24 @@ function juju_generate_metadata()
 
 function bootstrap_juju_controller()
 {
-    local cmd="juju controllers | grep openstack"
-    exec_cmd_on_client $cmd
+    local cmd1="juju controllers | grep openstack"
+    exec_cmd_on_client $cmd1
     if [[ $? != 0 ]];then
-        local cmd1="juju bootstrap openstack openstack \
+        local cmd2="juju bootstrap openstack openstack \
             --config image-metadata-url=http://$juju_client_ip/images \
             --config network=juju-net --config use-floating-ip=True \
             --config use-default-secgroup=True \
             --constraints 'mem=4G root-disk=40G' \
             --verbose --debug"
+        exec_cmd_on_client $cmd2
         exec_cmd_on_client $cmd1
+        if [[ $? == 0 ]];then
+            log_info "juju controller launched!"
+        else
+            log_error "launch juju controller fail!"
+            exit 1
+        fi
     fi
-    log_info "juju controller launched!"
 }
 
 function launch_juju()
