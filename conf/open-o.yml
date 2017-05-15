@@ -10,4 +10,6 @@ openo_docker_net:
   nfvo_driver_vnfm_juju_port: 8483
   nfvo_driver_vnfm_juju_mysql_port: 3306
 
-application:
+enable_sdno: false
+
+vnf_type:

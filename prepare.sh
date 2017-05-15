@@ -14,7 +14,7 @@ function generate_conf()
     rm -rf ${SCRIPT_DIR}
     mkdir -p ${SCRIPT_DIR}
     python ${OPERA_DIR}/process_conf.py ${CONF_DIR}/open-o.yml \
-                                        ${CONF_DIR}/application.yml
+                                        ${CONF_DIR}/vnf.yml
 }
 
 function package_prepare()
@@ -28,10 +28,10 @@ function package_prepare()
         sudo yum install -y wget python-pip sshpass figlet curl net-tools
     fi
     sudo pip install pyyaml
-    docker version &>/dev/null
+    sudo docker version &>/dev/null
     if [[ $? != 0 ]];then
-        curl -sSL https://experimental.docker.com/ | sh
-        service docker start
+        sudo curl -sSL https://experimental.docker.com/ | sh
+        sudo service docker start
     fi
 }
 
@@ -53,7 +53,7 @@ function network_prepare()
 
 function prepare_env()
 {
-    generate_conf
     package_prepare
+    generate_conf
     network_prepare
 }

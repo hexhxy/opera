@@ -13,15 +13,15 @@ CSAR_DIR=${WORK_DIR}/csar
 
 function juju_env_prepare()
 {
-    sudo rm -f /root/.ssh/known_hosts
-    sudo rm -f /root/.ssh/known_hosts.old
+    rm -f ~/.ssh/known_hosts
+    rm -f ~/.ssh/known_hosts.old
 
     mkdir -p ${WORK_DIR}/venv
     sudo pip install --upgrade virtualenv
     virtualenv ${WORK_DIR}/venv
 
     source ${WORK_DIR}/venv/bin/activate
-    pip install --upgrade python-openstackclient python-neutronclient
+    pip install -r ${OPERA_DIR}/requirements.txt
 }
 
 function juju_download_img()
@@ -54,12 +54,11 @@ function juju_prepare()
     done
 
     wget -nc -O $IMG_DIR/$JUJU_VM_IMG $JUJU_VM_IMG_URL
-    if [[ $(glance image-list | grep $JUJU_VM_IMG) ]]; then
-        openstack image delete $JUJU_VM_IMG
+    if [[ ! $(glance image-list | grep $JUJU_VM_IMG) ]]; then
+        glance image-create --name=$JUJU_VM_IMG \
+            --disk-format qcow2 --container-format=bare \
+            --visibility=public --file $IMG_DIR/$JUJU_VM_IMG
     fi
-    glance image-create --name=$JUJU_VM_IMG \
-        --disk-format qcow2 --container-format=bare \
-        --visibility=public --file $IMG_DIR/$JUJU_VM_IMG
 
     mkdir -p $CSAR_DIR
     for((i=0;i<${#CSAR_NAME[@]};i++))
@@ -114,10 +113,10 @@ function juju_prepare()
                                            --remote-ip-prefix 0.0.0.0/0 $default_secgroup_id
     fi
 
-    echo -e 'n\n'|ssh-keygen -q -t rsa -N "" -f /root/.ssh/id_rsa 1>/dev/null
+    echo -e 'n\n' | ssh-keygen -q -t rsa -N "" -f ~/.ssh/id_rsa 1>/dev/null
 
     openstack keypair delete jump-key | true
-    openstack keypair create --public-key /root/.ssh/id_rsa.pub jump-key
+    openstack keypair create --public-key ~/.ssh/id_rsa.pub jump-key
 
     openstack flavor show m1.tiny   || openstack flavor create --ram 512 --disk 5 --vcpus 1 --public m1.tiny
     openstack flavor show m1.small  || openstack flavor create --ram 1024 --disk 10 --vcpus 1 --public m1.small

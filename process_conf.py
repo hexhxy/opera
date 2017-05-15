@@ -24,17 +24,18 @@ def generate_openo_conf(openo_config, scripts_dir):
             fd.write('{0}={1}\n'.format(i.upper(), openo_config["openo_docker_net"][i]))
 
         fd.write('{0}={1}\n'.format('OPENO_VERSION', openo_config["openo_version"]))
+        fd.write('{0}={1}'.format('ENABLE_SDNO', openo_config["enable_sdno"]))
 
 
-def generate_app_conf(openo_config, app_config, scripts_dir):
-    """generate opera/work/scripts_dir/application.conf"""
-    with open(scripts_dir + "/application.conf", "w") as fd:
-        for i in app_config["application"]:
-            if i["name"] == openo_config["application"]:
-                fd.write('{0}={1}\n'.format('APP_NAME', i["name"]))
-                fd.write('{0}={1}\n'.format('APP_NS_PKG', i["ns_pkg"]))
-                fd.write('{0}={1}'.format('APP_VNF_PKG', i["vnf_pkg"]))
-            break
+def generate_app_conf(openo_config, vnf_config, scripts_dir):
+    """generate opera/work/scripts_dir/vnf.conf"""
+    with open(scripts_dir + "/vnf.conf", "w") as fd:
+        for i in vnf_config["vIMS"]:
+            fd.write('{0}={1}\n'.format('NS_PKG', i["ns_pkg"]))
+            fd.write('{0}={1}\n'.format('VNF_PKG', i["vnf_pkg"]))
+            if i["type"] == openo_config["vnf_type"]:
+                fd.write('{0}={1}\n'.format('VNF_TYPE', i["type"]))
+                fd.write('{0}={1}'.format('NSDID', i["nsdId"]))
 
 
 if __name__ == "__main__":
@@ -42,13 +43,13 @@ if __name__ == "__main__":
         print("parameter wrong%d %s" % (len(sys.argv), sys.argv))
         sys.exit(1)
 
-    _, openo_file, app_file = sys.argv
+    _, openo_file, vnf_file = sys.argv
 
     if not os.path.exists(openo_file):
         print("network.yml doesn't exit")
         sys.exit(1)
 
-    if not os.path.exists(app_file):
+    if not os.path.exists(vnf_file):
         print("application.yml doesn't exit")
         sys.exit(1)
 
@@ -57,9 +58,9 @@ if __name__ == "__main__":
         print('format error in %s' % openo_file)
         sys.exit(1)
 
-    app_config = load_file(app_file)
-    if not app_config:
-        print('format error in %s' % app_file)
+    vnf_config = load_file(vnf_file)
+    if not vnf_config:
+        print('format error in %s' % vnf_file)
         sys.exit(1)
 
     opera_dir = os.getenv('OPERA_DIR')
@@ -69,4 +70,4 @@ if __name__ == "__main__":
         sys.exit(1)
 
     generate_openo_conf(openo_config, scripts_dir)
-    generate_app_conf(openo_config, app_config, scripts_dir)
+    generate_app_conf(openo_config, vnf_config, scripts_dir)

@@ -78,7 +78,8 @@ function juju_client_prepare()
             $OS_REGION_NAME:
                 endpoint: $OS_AUTH_URL' > clouds.yaml"
 
-    local cmd1="juju add-cloud openstack clouds.yaml --replace"
+    local cmd1="juju remove-cloud openstack; \
+                juju add-cloud openstack clouds.yaml --replace"
     exec_cmd_on_client $cmd1
 
     if [[ ! $(exec_cmd_on_client "juju list-clouds | grep openstack") ]]; then
@@ -90,6 +91,9 @@ function juju_client_prepare()
     exec_cmd_on_client $cmd2
 
     scp_to_client ${CONF_DIR}/admin-openrc.sh /home/ubuntu
+
+    local cmd4="cd /home/ubuntu/juju_server; git reset --hard; git pull;"
+    exec_cmd_on_client $cmd4
 }
 
 function juju_generate_metadata()
