@@ -40,13 +40,13 @@ function network_prepare()
     local assigned_ip=`sed -n 's/OPENO_IP=//p' ${SCRIPT_DIR}/open-o.conf`
     echo $assigned_ip
     if [[ $assigned_ip != 'None' ]]; then
-        if [[ ! $(ifconfig -a | grep openo) ]]; then
+        if [[ ! $(sudo ifconfig -a | grep openo) ]]; then
             sudo ip tuntap add dev openo mode tap
         fi
         sudo ifconfig openo $assigned_ip up
     else
         external_nic=`ip route |grep '^default'|awk '{print $5F}'`
-        host_ip=`ifconfig $external_nic | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'`
+        host_ip=`sudo ifconfig $external_nic | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'`
         sed -i "s/^\(.*OPENO_IP=\).*/\1$host_ip/g" ${SCRIPT_DIR}/open-o.conf
     fi
 }
